@@ -43,3 +43,8 @@ $ karma run
 ```
 
 All unit tests are located in the `test` directory.
+
+
+## Getting access to Log from browser console
+
+TODO.
