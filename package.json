@@ -1,0 +1,24 @@
+{
+  "name": "angular-logger",
+  "version": "1.0.0",
+  "description": "Improved logger for AngularJS projects.",
+  "main": "src/angular-logger.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "angular": "^1.4.8",
+    "angular-mocks": "^1.4.8",
+    "karma": "^0.13.15"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/karma run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@git.saucybattle.com/projects/angular-logger.git"
+  },
+  "author": "Robert Hodgen",
+  "license": "MIT"
+}
