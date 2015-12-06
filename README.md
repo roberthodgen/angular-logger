@@ -27,13 +27,19 @@ var app = angular.module('myAppOrModule', ['roberthodgen.angular-logger']);
 ```
 
 
-## Install (re dependencies)
+## Requirements
+
+Ensure all NPM dependencies are installed and updated.
 
 ```
 $ npm install
 ```
 
-Ensure all NPM dependencies are installed and updated.
+Install Karma
+
+```
+$ npm install -g karma-cli
+```
 
 
 ## Tests
