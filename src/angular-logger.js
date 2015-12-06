@@ -60,7 +60,6 @@
 
       function CreateLogLevelException (level) {
         this.level = level;
-        this.message = 'Cannot create log level ';
         this.toString = function () {
           return 'Cannot create log level [' + this.level + ']';
         }
@@ -113,11 +112,26 @@
 
 
   /**
+   * LOG_HOOKS
+   * Object that stores hooks in key-value pairs where the key is the log level
+   * and value is an Array of hook functions.
+   */
+  app.constant('LOG_HOOKS', {});
+
+
+  /**
    * LogLevelFactory
    * Returns a function for logging a given level.
    */
-  app.factory('LogLevelFactory', ['LOG_HISTORY', function (LOG_HISTORY) {
+  app.factory('LogLevelFactory', ['LOG_HISTORY', 'LOG_HOOKS', function (LOG_HISTORY, LOG_HOOKS) {
     return function (level) {
+      if (angular.isString(level)) {
+        level = { name: level };
+      }
+
+      if (!angular.isObject(level)) {
+        throw LogLevelFactoryException(level);
+      }
 
 
       /**
@@ -126,7 +140,11 @@
        */
       function LogLevel (entry) {
         if (angular.isDefined(entry)) {
-          LOG_HISTORY[level].push(entry);
+          LOG_HISTORY[level.name].push(entry);
+
+          LOG_HOOKS[level.name].forEach(function (hook) {
+            hook(entry);
+          });
         }
       }
 
@@ -135,7 +153,58 @@
        * LogLevel.history
        * Makes this level's history easily accessible (e.g. Log.debug.history)
        */
-      LogLevel.history = LOG_HISTORY[level];
+      LogLevel.history = LOG_HISTORY[level.name] = [];
+
+
+      /**
+       * LOG_HOOKS
+       */
+      LOG_HOOKS[level.name] = [];
+
+
+      /**
+       * LogLevel.registerHook
+       * Adds a hook function to be called when this .
+       */
+       LogLevel.addHook = function (hook) {
+        if (!angular.isFunction(hook)) {
+          throw LogLevelFactoryHookException(hook);
+        }
+
+        LOG_HOOKS[level.name].push(hook);
+
+        function removeHook () {
+          var i = LOG_HOOKS[level.name].indexOf(hook);
+          if (i > -1) {
+            return delete LOG_HOOKS[level.name][i];
+          }
+        }
+
+        return removeHook;
+       };
+
+
+      /**
+       * LogLevelFactoryException
+       *
+       */
+      function LogLevelFactoryException (value) {
+        this.value = value;
+        this.toString = function () {
+          return 'Unsupported log level. Expected String or Object.';
+        }
+      }
+
+
+      /**
+       * LogLevelFactoryHookException
+       */
+      function LogLevelFactoryHookException (value) {
+        this.value = value;
+        this.toString = function () {
+          return 'Unsupported hook. Expected String, got ' + typeof this.value;
+        }
+      }
 
       return LogLevel;
     };
