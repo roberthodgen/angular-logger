@@ -8,17 +8,29 @@
 
 
     /**
-     * RUN_LEVELS
+     * LOG_LEVELS
      * May be configured by setting.
      */
-    LogProvider.RUN_LEVELS = ['debug', 'warn', 'error'];
+    LogProvider.LOG_LEVELS = ['debug', 'warn', 'error'];
 
 
     /**
-     * RUN_LEVELS
-     * Add a single run-level
+     * LOG_LEVELS
+     * Add a single log level
      */
-    LogProvider.RUN_LEVELS.push('test');
+    LogProvider.LOG_LEVELS.push('test');
+
+
+    /**
+     * LOG_LEVELS
+     * Add a single log level with a hook.
+     */
+    LogProvider.LOG_LEVELS.push({
+      name: 'alert',
+      hooks: [function (entry) {
+        alert(entry);
+      }]
+    });
 
 
     /**

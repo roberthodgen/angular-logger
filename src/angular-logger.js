@@ -58,19 +58,26 @@
     function LogService (LOG_LEVELS, CONFIG, $window, LogLevelFactory) {
       var self = this;
 
-      function CreateLogLevelException (level) {
-        this.level = level;
-        this.toString = function () {
-          return 'Cannot create log level [' + this.level + ']';
-        }
-      }
 
+      /**
+       * LogService.createLogLevel
+       * Called for every level in LOG_LEVELS.
+       * Validates each level as a String or Object then sets LogLevelFactory result on self.
+       */
       self.createLogLevel = function (level) {
-        if (self.hasOwnProperty(level)) {
-          throw CreateLogLevelException(level);
+        if (angular.isString(level)) {
+          level = { name: level };
         }
 
-        self[level] = LogLevelFactory(level);
+        if (!angular.isObject(level)) {
+          throw Error('Unsupported log level. Expected String or Object.');
+        }
+
+        if (self.hasOwnProperty(level.name)) {
+          throw Error('Cannot create log level. [' + this.level.name + '] already exists on LogService.');
+        }
+
+        self[level.name] = LogLevelFactory(level);
       }
 
 
@@ -84,12 +91,7 @@
         console.info('roberthodgen.angular-logger: Log service attached to $window, now accessible via the JavaScript console as "Log".');
       };
 
-
-      for (var i in LOG_LEVELS) {
-        if (i && LOG_LEVELS[i]) {
-          self.createLogLevel(LOG_LEVELS[i]);
-        }
-      }
+      LOG_LEVELS.forEach(self.createLogLevel);
 
       if (CONFIG.ATTACH_TO_WINDOW === true) {
         self.attachToWindow();
@@ -124,13 +126,6 @@
    */
   app.factory('LogLevelFactory', ['LOG_HISTORY', 'LOG_HOOKS', function (LOG_HISTORY, LOG_HOOKS) {
     return function (level) {
-      if (angular.isString(level)) {
-        level = { name: level };
-      }
-
-      if (!angular.isObject(level)) {
-        throw LogLevelFactoryException(level);
-      }
 
 
       /**
@@ -140,37 +135,29 @@
       function LogLevel (entry) {
         if (angular.isDefined(entry)) {
           LOG_HISTORY[level.name].push(entry);
-
-          LOG_HOOKS[level.name].forEach(function (hook) {
-            hook(entry);
-          });
+          callHooks(entry);
         }
       }
 
 
       /**
-       * LogLevel.history
-       * Initialize.
-       * Makes this level's history easily accessible (e.g. Log.debug.history)
+       * Hook caller function.
+       * Calls all hooks for this level.
        */
-      LogLevel.history = LOG_HISTORY[level.name] = [];
-
-
-      /**
-       * LOG_HOOKS
-       * Initialize.
-       * Stores hooks for this log level.
-       */
-      LOG_HOOKS[level.name] = [];
+      function callHooks (entry) {
+        LOG_HOOKS[level.name].forEach(function (hook) {
+          hook(entry);
+        });
+      }
 
 
       /**
        * LogLevel.registerHook
        * Adds a hook function to be called when this .
        */
-       LogLevel.addHook = function (hook) {
+      LogLevel.addHook = function (hook) {
         if (!angular.isFunction(hook)) {
-          throw LogLevelFactoryHookException(hook);
+          throw new Error('Unsupported hook. Expected function got ' + typeof hook);
         }
 
         LOG_HOOKS[level.name].push(hook);
@@ -188,30 +175,27 @@
         }
 
         return removeHook;
-       };
+      };
 
 
       /**
-       * LogLevelFactoryException
-       *
+       * LOG_HOOKS
+       * Initialize.
+       * Stores hooks for this log level.
        */
-      function LogLevelFactoryException (value) {
-        this.value = value;
-        this.toString = function () {
-          return 'Unsupported log level. Expected String or Object.';
-        }
+      LOG_HOOKS[level.name] = [];
+
+      if (angular.isArray(level.hooks)) {
+        level.hooks.forEach(LogLevel.addHook);
       }
 
 
       /**
-       * LogLevelFactoryHookException
+       * LogLevel.history
+       * Initialize.
+       * Makes this level's history easily accessible (e.g. Log.debug.history)
        */
-      function LogLevelFactoryHookException (value) {
-        this.value = value;
-        this.toString = function () {
-          return 'Unsupported hook. Expected String, got ' + typeof this.value;
-        }
-      }
+      LogLevel.history = LOG_HISTORY[level.name] = [];
 
       return LogLevel;
     };
