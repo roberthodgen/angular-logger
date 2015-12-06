@@ -43,11 +43,11 @@
      * Invoked when "Log" is first injected.
      * Provides the actual "Log" service ("LogService").
      */
-    self.$get = ['$window', 'LOG_HISTORY', 'LogLevelFactory', function ($window, LOG_HISTORY, LogLevelFactory) {
+    self.$get = ['$window', 'LogLevelFactory', function ($window, LogLevelFactory) {
       return new LogService(self.LOG_LEVELS, {
         TO_CONSOLE_LOG: self.TO_CONSOLE_LOG,
         ATTACH_TO_WINDOW: self.ATTACH_TO_WINDOW
-      }, $window, LOG_HISTORY, LogLevelFactory);
+      }, $window, LogLevelFactory);
     }];
 
 
@@ -55,7 +55,7 @@
      * LogService
      * Actual "Log" service that's injected.
      */
-    function LogService (LOG_LEVELS, CONFIG, $window, LOG_HISTORY, LogLevelFactory) {
+    function LogService (LOG_LEVELS, CONFIG, $window, LogLevelFactory) {
       var self = this;
 
       function CreateLogLevelException (level) {
@@ -70,7 +70,6 @@
           throw CreateLogLevelException(level);
         }
 
-        LOG_HISTORY[level] = [];
         self[level] = LogLevelFactory(level);
       }
 
@@ -151,6 +150,7 @@
 
       /**
        * LogLevel.history
+       * Initialize.
        * Makes this level's history easily accessible (e.g. Log.debug.history)
        */
       LogLevel.history = LOG_HISTORY[level.name] = [];
@@ -158,6 +158,8 @@
 
       /**
        * LOG_HOOKS
+       * Initialize.
+       * Stores hooks for this log level.
        */
       LOG_HOOKS[level.name] = [];
 
@@ -173,6 +175,11 @@
 
         LOG_HOOKS[level.name].push(hook);
 
+
+        /**
+         * Deregister function.
+         * Removes the (just added) hook from LOG_HOOKS for this level when called.
+         */
         function removeHook () {
           var i = LOG_HOOKS[level.name].indexOf(hook);
           if (i > -1) {
