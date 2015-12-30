@@ -77,8 +77,8 @@
           throw Error('Cannot create log level. [' + this.level.name + '] already exists on LogService.');
         }
 
-        self[level.name] = LogLevelFactory(level);
-      }
+        return (self[level.name] = LogLevelFactory(level));
+      };
 
 
       /**
