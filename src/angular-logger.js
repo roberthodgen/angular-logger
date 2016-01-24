@@ -65,8 +65,6 @@
        * Validates each level as a String or Object then sets LogLevelFactory result on self.
        */
       self.createLogLevel = function (level) {
-        var log;
-
         if (angular.isString(level)) {
           level = { name: level };
         }
@@ -79,13 +77,13 @@
           throw Error('Cannot create log level. [' + this.level.name + '] already exists on LogService.');
         }
 
-        log = LogLevelFactory(level);
+        var log = self[level.name] = LogLevelFactory(level);
 
         if (CONFIG.TO_CONSOLE === true) {
           log.addHook($log[level.name] || $log.info || angular.noop);
         }
 
-        return (self[level.name] = log);
+        return log;
       };
 
 
@@ -174,7 +172,7 @@
         function removeHook () {
           var i = LOG_HOOKS[level.name].indexOf(hook);
           if (i > -1) {
-            return delete LOG_HOOKS[level.name][i];
+            LOG_HOOKS[level.name].splice(i, 1);
           }
         }
 
