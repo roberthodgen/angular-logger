@@ -20,7 +20,7 @@ module.exports = function(config) {
       'node_modules/angular-mocks/angular-mocks.js',
 
       // File to test
-      'src/**/*.js',
+      'logger.js',
 
       // Test spec files
       'test/**/*.js'
@@ -73,5 +73,5 @@ module.exports = function(config) {
     // Concurrency level
     // how many browser should be started simultanous
     concurrency: Infinity
-  })
-}
+  });
+};

@@ -1,7 +1,7 @@
 (function () {
 
   var app = angular.module('app', [
-    'roberthodgen.angular-logger'
+    'roberthodgen.logger'
   ]);
 
   app.config(['LogProvider', function (LogProvider) {

@@ -1,6 +1,6 @@
 (function () {
 
-  var app = angular.module('roberthodgen.angular-logger', []);
+  var app = angular.module('roberthodgen.logger', []);
 
 
   /*

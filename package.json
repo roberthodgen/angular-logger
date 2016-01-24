@@ -1,8 +1,8 @@
 {
-  "name": "angular-logger",
+  "name": "roberthodgen-logger",
   "version": "1.0.0",
   "description": "Improved logger for AngularJS projects.",
-  "main": "src/angular-logger.js",
+  "main": "logger.js",
   "directories": {
     "test": "test"
   },
@@ -16,11 +16,11 @@
     "karma-jasmine": "^0.3.6"
   },
   "scripts": {
-    "test": "./node_modules/.bin/karma run"
+    "test": "./node_modules/.bin/karma start --singleRun"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/roberthodgen/angular-logger.git"
+    "url": "https://github.com/roberthodgen/logger.git"
   },
   "author": "Robert Hodgen",
   "license": "MIT"

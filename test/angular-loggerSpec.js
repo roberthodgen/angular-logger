@@ -1,5 +1,5 @@
-describe('roberthodgen.angular-logger', function () {
-    beforeEach(angular.mock.module('roberthodgen.angular-logger'));
+describe('roberthodgen.logger', function () {
+    beforeEach(angular.mock.module('roberthodgen.logger'));
 
     describe('LogProvider', function () {
         var LogProvider;
