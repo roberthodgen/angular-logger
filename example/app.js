@@ -16,7 +16,7 @@
 
     /**
      * LOG_LEVELS
-     * Add a single log level
+     * Add a single log level.
      */
     LogProvider.LOG_LEVELS.push('test');
 
@@ -42,7 +42,7 @@
     /**
      * ATTACH_TO_WINDOW
      * When set to true, the Log serice will be attached to the window
-     * thus making it accessible on the JavaScript console.
+     * thus making it accessible in the JavaScript console.
      */
     LogProvider.ATTACH_TO_WINDOW = true;
   }]);

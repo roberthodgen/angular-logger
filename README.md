@@ -1,27 +1,34 @@
-# angular-logger
+# roberthodgen-logger
 
 > Improved logger for AngularJS projects.
 
 
 ## Features
 
-- Multiple (and customizable) log levels.
-- Log history (up to _n_ records).
+- Multiple, customizable log levels.
+- Log history accessible via JavaScript.
 - Hooks for error handling.
+
+
+## Install
+
+```
+npm install roberthodgen-logger
+```
 
 
 ## Usage
 
-Include the `angular-logger.js` file in your project:
+Include the `logger.js` file in your project:
 
 ```
-<script src="angular-logger.js"></script>
+<script src="logger.js"></script>
 ```
 
-Make `roberthodgen.angular-logger` available in your modules, e.g.:
+Make `roberthodgen.logger` available in your modules, e.g.:
 
 ```
-var app = angular.module('myAppOrModule', ['roberthodgen.angular-logger']);
+var app = angular.module('myAppOrModule', ['roberthodgen.logger']);
 ```
 
 
@@ -40,7 +47,7 @@ Where `debug` property of `Log` should be switched to your defined level.
 Log.debug.history
 ```
 
-An Array with a given level's history is set as the `history` property of each level.
+A level's history is available through the `history` property.
 
 
 ### Using hooks
@@ -94,21 +101,6 @@ Where the `name` property is the name associated with the log level and `hooks` 
 NOTE: When adding hooks during config no deregister functions are saved or returned!
 
 
-## Requirements
-
-Ensure all NPM dependencies are installed and updated.
-
-```
-$ npm install
-```
-
-Install Karma
-
-```
-$ npm install -g karma-cli
-```
-
-
 ## Tests
 
 ```
@@ -120,4 +112,9 @@ All unit tests are located in the `test` directory.
 
 ## Getting access to Log from browser console
 
-TODO.
+With `LogProvider.ATTACH_TO_WINDOW` set to `TRUE` at configuration the Log service will be available in the JavaScript console simply as `Log`.
+
+
+## Write to Console
+
+With `LogProvider.TO_CONSOLE` set to `TRUE` at configuration each log level will output to the JavaScript console with a similar name, e.g. warn, or default to `info`. This is accomplished via Angular's `$log` with the following logic: `$log[level.name] || $log.info || angular.noop`
