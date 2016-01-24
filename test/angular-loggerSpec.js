@@ -21,11 +21,11 @@ describe('roberthodgen.angular-logger', function () {
 
       beforeEach(angular.mock.inject(function (_Log_) {
         Log = _Log_;
-      }))
+      }));
 
       it('should exist', function () {
         expect(Log).toBeDefined();
-      })
+      });
     });
 
     describe('LogLevelFactory', function () {
@@ -38,6 +38,6 @@ describe('roberthodgen.angular-logger', function () {
       it('should exist', function () {
         expect(LogLevelFactory).toBeDefined();
         expect(LogLevelFactory).toEqual(jasmine.any(Function));
-      })
-    })
+      });
+    });
 });

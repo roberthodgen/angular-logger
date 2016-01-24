@@ -11,7 +11,7 @@
      * LOG_LEVELS
      * May be configured by setting.
      */
-    LogProvider.LOG_LEVELS = ['debug', 'warn', 'error'];
+    LogProvider.LOG_LEVELS = ['warn', 'info', 'error'];
 
 
     /**
@@ -34,9 +34,9 @@
 
 
     /**
-     * TO_CONSOLE_LOG
+     * TO_CONSOLE
      */
-    LogProvider.TO_CONSOLE_LOG = true;
+    LogProvider.TO_CONSOLE = true;
 
 
     /**
@@ -52,9 +52,9 @@
 
 
       /**
-       * Simple usage of the debug loging level.
+       * Simple usage of the info loging level.
        */
-      Log.debug('AppController: $scope.init');
+      Log.info('AppController: $scope.init');
     };
 
 
@@ -62,6 +62,6 @@
      * Init
      */
     $scope.init();
-  }])
+  }]);
 
 })();

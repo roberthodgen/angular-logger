@@ -23,11 +23,11 @@
 
 
     /**
-     * LogProvider.TO_CONSOLE_LOG
+     * LogProvider.TO_CONSOLE
      * When true, all messages will also be output the the console.
-     *
+     * Attempts to use an existing log, e.g. `warn`, if that does not exist defaults to `log`.
      */
-    self.TO_CONSOLE_LOG = true;
+    self.TO_CONSOLE = false;
 
 
     /**
@@ -35,7 +35,7 @@
      * When true, the Log service will be attached to the window (via $window)
      * so that it is easily accessible via the console as simply "Log".
      */
-    self.ATTACH_TO_WINDOW = true;
+    self.ATTACH_TO_WINDOW = false;
 
 
     /**
@@ -43,11 +43,11 @@
      * Invoked when "Log" is first injected.
      * Provides the actual "Log" service ("LogService").
      */
-    self.$get = ['$window', 'LogLevelFactory', function ($window, LogLevelFactory) {
+    self.$get = ['$window', '$log', 'LogLevelFactory', function ($window, $log, LogLevelFactory) {
       return new LogService(self.LOG_LEVELS, {
-        TO_CONSOLE_LOG: self.TO_CONSOLE_LOG,
+        TO_CONSOLE: self.TO_CONSOLE,
         ATTACH_TO_WINDOW: self.ATTACH_TO_WINDOW
-      }, $window, LogLevelFactory);
+      }, $window, $log, LogLevelFactory);
     }];
 
 
@@ -55,7 +55,7 @@
      * LogService
      * Actual "Log" service that's injected.
      */
-    function LogService (LOG_LEVELS, CONFIG, $window, LogLevelFactory) {
+    function LogService (LOG_LEVELS, CONFIG, $window, $log, LogLevelFactory) {
       var self = this;
 
 
@@ -65,6 +65,8 @@
        * Validates each level as a String or Object then sets LogLevelFactory result on self.
        */
       self.createLogLevel = function (level) {
+        var log;
+
         if (angular.isString(level)) {
           level = { name: level };
         }
@@ -77,7 +79,13 @@
           throw Error('Cannot create log level. [' + this.level.name + '] already exists on LogService.');
         }
 
-        return (self[level.name] = LogLevelFactory(level));
+        log = LogLevelFactory(level);
+
+        if (CONFIG.TO_CONSOLE === true) {
+          log.addHook($log[level.name] || $log.info || angular.noop);
+        }
+
+        return (self[level.name] = log);
       };
 
 
@@ -86,19 +94,15 @@
        * Invoked when CONFIG.ATTACH_TO_WINDOW is true.
        * Simply sets $window.Log equal to this Log service.
        */
-       self.attachToWindow =  function () {
+      self.attachToWindow =  function () {
         $window.Log = self;
-        console.info('roberthodgen.angular-logger: Log service attached to $window, now accessible via the JavaScript console as "Log".');
+        $log.info('roberthodgen.angular-logger: Log service attached to $window, now accessible via the JavaScript console as "Log".');
       };
 
       LOG_LEVELS.forEach(self.createLogLevel);
 
       if (CONFIG.ATTACH_TO_WINDOW === true) {
         self.attachToWindow();
-      }
-
-      if (CONFIG.TO_CONSOLE_LOG === true) {
-        // TODO: Create a hook to log all log levels...
       }
     }
   }]);
