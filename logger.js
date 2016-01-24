@@ -16,6 +16,8 @@
      * Defines which log levels exist.
      */
     self.LOG_LEVELS = [
+      'info',
+      'log',
       'debug',
       'warn',
       'error'
